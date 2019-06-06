@@ -1,0 +1,20 @@
+version: '3'
+services:
+  server:
+    image: dotlou/go-weather-app:development
+    build:
+      context: .
+      dockerfile: server.Dockerfile
+    volumes:
+      - ./config.json:/config.json
+    ports:
+      - "8080:8080"
+  ui:
+    image: dotlou/react-weather-app:development
+    build:
+      context: .
+      dockerfile: ui.Dockerfile
+    ports:
+      - "3000:2015"
+    depends_on:
+      - server
