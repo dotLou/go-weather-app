@@ -1,0 +1,108 @@
+swagger: '2.0'
+info:
+  description: This is an API for fetching weather for a given location
+  version: 1.0.0
+  title: go-weather-app API
+  # put the contact info for your development or API team
+  contact:
+    email: go-weather-app@example.com
+
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+
+# tags are used for organizing operations
+tags:
+- name: backends
+  description: Operations related to weather backends
+- name: weather
+  description: Operations related to fetching weather data
+paths:
+  /v1/backends:
+    get:
+      tags:
+      - backends
+      summary: provides a list of configured/available weather backends/sources
+      operationId: getBackends
+      produces:
+      - application/json
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/BackendItem'
+  /v1/weather/{city}:
+    get:
+      tags:
+      - weather
+      summary: gets the weather from the specified backend(s) for the provided city
+      operationId: getCityWeather
+      description: |
+        By passing in the appropriate options, you can search for
+        get the weather for the provided city from various weather backends
+      produces:
+      - application/json
+      parameters:
+      - name: city
+        in: path
+        description: city for which to fetch weather data for
+        required: true
+        type: string
+      - in: query
+        name: backend
+        description: pass an optional backend string to specify which target backend to use (not specifying this will fetch data from all the default backends)
+        required: false
+        type: string
+      responses:
+        200:
+          description: search results matching criteria
+          schema:
+            $ref: '#/definitions/WeatherItem'
+        400:
+          description: bad input parameter
+definitions:
+  BackendItem:
+    type: array
+    items:
+      type: string
+  WeatherItem:
+    required: 
+      - "city"
+      - "data"
+      - "error"
+    properties: 
+      city: 
+        type: "string"
+        example: "gatineau"
+      data: 
+        type: "array"
+        items: 
+          type: "object"
+          properties: 
+            source: 
+              type: "string"
+              example: "openweathermap"
+            temperature: 
+              type: "number"
+              example: 13.29
+            temperature_min: 
+              type: "number"
+              example: 12.78
+            temperature_max: 
+              type: "number"
+              example: 14
+            main_description: 
+              type: "string"
+              example: "Rain"
+            detailed_description: 
+              type: "string"
+              example: "light rain"
+      error: 
+        type: "string"
+        example: ""
+host: localhost:8080
+basePath: /
+schemes:
+ - http
